@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+  runtime  = "workerd"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Post {
+  id            Int                 @id @default(autoincrement())
+  slug          String              @unique
+  status        String
+  author        String              @default("Contenuti")
+  title         String
+  content       String
+  excerpt       String
+  tags          String[]
+  dateCreated   DateTime            @default(now())
+  dateUpdated   DateTime            @default(now())
+  follow        Boolean?            @default(true)
+  featuredMedia String?
+  thumbnail     String?
+  categories    CategoriesOnPosts[]
+
+  @@map("posts")
+}
+
+model Category {
+  id       Int                 @id @default(autoincrement())
+  name     String?
+  parentId Int?
+  posts    CategoriesOnPosts[]
+  parent   Category?           @relation("parent", fields: [parentId], references: [id], onDelete: Cascade)
+  children Category[]          @relation("parent")
+
+  @@map("categories")
+}
+
+model CategoriesOnPosts {
+  postId     Int
+  categoryId Int
+  id         Int      @default(autoincrement())
+  category   Category @relation(fields: [categoryId], references: [id])
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+	@@id([postId, categoryId])
+}

@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+  runtime  = "workerd"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+//Articles
+model Post {
+  id            Int                 @id @default(autoincrement())
+  slug          String              @unique
+  status        String
+  author        String              @default("Contenuti")
+  title         String
+  content       String
+  excerpt       String
+  featuredMedia String?
+  thumbnail     String?
+  categories    CategoriesOnPosts[]
+  tags          String[]
+  dateCreated   DateTime            @default(now())
+  dateUpdated   DateTime            @default(now())
+  follow        Boolean?            @default(true)
+
+  @@map("posts")
+}
+
+model Category {
+  id       Int                 @id @default(autoincrement())
+  name     String?
+  parent   Category?           @relation("parent", fields: [parentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  children Category[]          @relation("parent")
+  posts    CategoriesOnPosts[]
+  parentId Int?
+
+  @@map("categories")
+}
+
+model CategoriesOnPosts {
+  id         Int      @id @default(autoincrement())
+  post       Post?    @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  postId     Int
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+}

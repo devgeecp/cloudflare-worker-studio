@@ -1,0 +1,49 @@
+{
+  "name": "db-rimborsoeu-worker",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy": "wrangler types && wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev",
+    "test": "vitest",
+    "cf-typegen": "wrangler types",
+    "migrate": "npx prisma migrate dev",
+    "generate": "npx prisma generate",
+    "studio": "npx prisma studio",
+    "prisma-full": "npx prisma migrate dev && npx prisma generate && npx auth@latest generate"
+  },
+  "dependencies": {
+    "@better-auth/i18n": "^1.6.11",
+    "@cloudflare/vite-plugin": "^1.33.0",
+    "@jsforce/jsforce-node": "^3.10.15",
+    "@prisma/adapter-pg": "^7.10.0",
+    "@prisma/adapter-ppg": "^7.7.0",
+    "@prisma/client": "^7.8.0",
+    "@types/express": "^5.0.6",
+    "@types/jsforce": "^1.11.6",
+    "@types/pg": "^8.20.0",
+    "argon2-wasm-edge": "^1.0.23",
+    "bcryptjs": "^3.0.3",
+    "better-auth": "^1.6.11",
+    "cloudflare": "^5.2.0",
+    "cloudflare-workers": "^0.0.14",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "hono": "^4.12.14",
+    "jsforce": "^3.10.15",
+    "next-auth": "^5.0.0-beta.31",
+    "pg": "^8.20.0",
+    "resend": "^6.12.2",
+    "xxhash-wasm": "^1.1.0"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.14.8",
+    "@types/node": "^25.5.2",
+    "prisma": "^7.8.0",
+    "typescript": "^5.5.2",
+    "vitest": "^4.1.5",
+    "wrangler": "^4.126.0"
+  }
+}
