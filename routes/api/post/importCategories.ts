@@ -43,7 +43,7 @@ const importCategories= async (_c: Context) => {
 
 					await Promise.all(newCatParents.map(async (category) => {
 						await prisma.category.upsert({
-							where: {id: category.id},
+							where: {id: category.id || 0},
 							update: {
 								name: category.name,
 								parentId: category.parentId != 0 ? category.parentId : null
