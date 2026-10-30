@@ -11,20 +11,20 @@ const postArticle = async (_c: Context) => {
 				const body: ({article: PayloadArticle, pw: string}) = await _c.req.json();
 
 				//check if request is authorized
-				const categoriesConnection =
-						body.article.categories.map(({id}) => {
-						return {
-							where: {
-								postId_categoryId: {
-									categoryId: id,
-									postId: body.article.id
-								}
-							},
-							data: {
-								category: {connect: {id: id}}
-							}
-						}
-					})
+				//const categoriesConnection =
+				//		body.article.categories.map(({id}) => {
+				//		return {
+				//			where: {
+				//				postId_categoryId: {
+				//					categoryId: id,
+				//					postId: body.article.id
+				//				}
+				//			},
+				//			data: {
+				//				category: {connect: {id: id}}
+				//			}
+				//		}
+				//	})
 
 				//post article
 				try {
@@ -37,12 +37,36 @@ const postArticle = async (_c: Context) => {
 					const prisma = prismaConnection(_c);
 
 					//create method prisma
+					console.log(body.article.categories) //.map(({id}) => console.log(id)));
+
+					//Delete categories
+					await prisma.post.update({
+						where: {
+							id: body.article.id
+						},
+						data: {
+							categories: {
+								deleteMany: {}
+							}
+						}
+					})
+
+
+					//put them again
 					await prisma.post.update({
 						where: {id: body.article.id},
 						data: {
 							...body.article,
 							categories: {
-								update: categoriesConnection
+								create: body.article.categories.map(cat => ({
+									category: {
+										connect: {
+											id: cat.id,
+											parentId: cat.parentId,
+											name: cat.name
+										}
+									}
+								}))
 							}
 						}
 					});
