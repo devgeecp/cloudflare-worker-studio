@@ -20,6 +20,7 @@ import editArticle from "../routes/api/post/editArticle"
 import getArticles from "../routes/api/get/getArticles"
 import deleteArticle from "../routes/api/delete/deleteArticle"
 import getCategories from '../routes/api/get/getCategories';
+import syncDatabasesRoute from '../routes/api/sync/syncDatabases';
 
 export interface Env {
 	HYPERDRIVE: Hyperdrive;
@@ -42,11 +43,6 @@ export interface Env {
 			  })
 			)
 
-			app.on(['GET', 'POST'],'/api/auth/*', (c) => {
-				return auth(createDb(c)).handler(c.req.raw)
-			})
-
-
 
 			/** GET all posts / post by id / post by slug */
 			app.get("/api/articles/:id-slug?", getArticles);
@@ -68,6 +64,6 @@ export interface Env {
 			/** POST import array/list of categories (look schema.prisma) */
 			app.post("/api/import/categories", importCategories);
 
-			//app.get("/api/users", getUsers);
+			app.get("/api/sync", syncDatabasesRoute);
 
 			export default app;

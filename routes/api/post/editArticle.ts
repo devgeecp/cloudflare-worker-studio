@@ -1,6 +1,7 @@
 import type { Context } from "hono";
 import type { ArticleType } from "../../../lib/types/ArticleType"
-import { prismaConnection } from "../../../lib/utils/prismaConnection"
+import { choosePrismaConnection } from "../../../lib/utils/prismaConnection"
+import { syncDatabases } from "../sync/syncDatabases";
 
 
 interface PayloadArticle extends Omit<ArticleType, "categories"> {
@@ -34,7 +35,7 @@ const postArticle = async (_c: Context) => {
 						throw Error("Access Denied");
 
 
-					const prisma = prismaConnection(_c);
+					const prisma = await choosePrismaConnection(_c);
 
 					//create method prisma
 					console.log(body.article.categories) //.map(({id}) => console.log(id)));
@@ -71,6 +72,7 @@ const postArticle = async (_c: Context) => {
 						}
 					});
 
+					await syncDatabases(_c);
 					return _c.json({message: "article added to database"}, 200);
 				//Error handling
 				} catch (e) {

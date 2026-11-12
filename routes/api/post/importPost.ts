@@ -1,6 +1,7 @@
 import type { Context } from "hono";
 import type { ArticleType } from "../../../lib/types/ArticleType"
-import { prismaConnection } from "../../../lib/utils/prismaConnection"
+import { choosePrismaConnection } from "../../../lib/utils/prismaConnection";
+import { syncDatabases } from "../sync/syncDatabases";
 
 const importPost = async (_c: Context) => {
 				const body: ({articles: ArticleType[], pw: string}) = await _c.req.json();
@@ -10,7 +11,7 @@ const importPost = async (_c: Context) => {
 					return _c.json({error: "Access Denied", status: 500});
 				//Import posts
 				try {
-					const prisma = prismaConnection(_c);
+					const prisma = await choosePrismaConnection(_c);
 				//	await prisma.post.deleteMany({});
 					await Promise.all(body.articles.map(async (article) => {
 
@@ -42,6 +43,7 @@ const importPost = async (_c: Context) => {
 						});
 					}))
 
+					await syncDatabases(_c);
 					return _c.json({message: "Posts imported"}, 200);
 				//Error handling
 				} catch (e) {

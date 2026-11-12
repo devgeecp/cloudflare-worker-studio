@@ -1,6 +1,7 @@
 import type { Context } from "hono";
 import type { ArticleType } from "../../../lib/types/ArticleType"
-import { prismaConnection } from "../../../lib/utils/prismaConnection"
+import { choosePrismaConnection } from "../../../lib/utils/prismaConnection";
+import { syncDatabases } from "../sync/syncDatabases"
 
 const postArticle = async (_c: Context) => {	
 				const body: ({article: ArticleType, pw: string}) = await _c.req.json();
@@ -19,7 +20,7 @@ const postArticle = async (_c: Context) => {
 
 				//post article
 				try {
-					const prisma = prismaConnection(_c);
+					const prisma = await choosePrismaConnection(_c);
 
 					//create method prisma
 					await prisma.post.create({
@@ -31,6 +32,7 @@ const postArticle = async (_c: Context) => {
 						}
 					});
 
+					await syncDatabases(_c);
 					return _c.json({message: "article added to database"}, 200);
 				//Error handling
 				} catch (e) {

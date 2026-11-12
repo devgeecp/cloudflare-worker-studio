@@ -1,3 +1,6 @@
+import { DefaultArgs } from "@prisma/client/runtime/client";
+import { PostDelegate } from "../../generated/prisma/models";
+import { GlobalOmitConfig } from "../../generated/prisma/internal/prismaNamespace";
 
 export interface ArticleType {
 	id: number,
@@ -24,3 +27,7 @@ export interface CategoryType {
 	children: CategoryType[],
 	posts: ArticleType[]
 }
+
+
+export type DbArticleType = PostDelegate<DefaultArgs, {
+    omit: GlobalOmitConfig | undefined;}>

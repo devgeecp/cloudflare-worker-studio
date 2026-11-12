@@ -1,5 +1,5 @@
 import type { Context } from "hono";
-import { prismaConnection } from "../../../lib/utils/prismaConnection";
+import { choosePrismaConnection, prismaConnection } from "../../../lib/utils/prismaConnection";
 
 export default async function getArticles(c: Context) {
 	const param = c.req.param();
@@ -20,7 +20,7 @@ export default async function getArticles(c: Context) {
 		page = Number(query.page);
 
 	const idOrSlug = param["id-slug"];
-	const prisma = prismaConnection(c);
+	const prisma = await choosePrismaConnection(c); 		
 
 	try {
 		/** Get all articles, filters them if query is present, possibles queries

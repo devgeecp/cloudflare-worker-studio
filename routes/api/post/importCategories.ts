@@ -1,6 +1,7 @@
 import type { Context } from "hono";
-import { prismaConnection } from "../../../lib/utils/prismaConnection"
+import { choosePrismaConnection } from "../../../lib/utils/prismaConnection"
 import { CategoryType } from "../../../lib/types/ArticleType"
+import { syncDatabases } from "../sync/syncDatabases";
 
 const importCategories= async (_c: Context) => {
 				const body: ({categories: CategoryType[], pw: string}) = await _c.req.json();
@@ -13,7 +14,7 @@ const importCategories= async (_c: Context) => {
 
 				//Import posts
 				try {
-					const prisma = prismaConnection(_c);
+					const prisma = await choosePrismaConnection(_c);
 
 					// upsert array/list of categories coming from request
 					const newCatNoParents =  body.categories.filter((el) => {
@@ -56,6 +57,7 @@ const importCategories= async (_c: Context) => {
 						});
 					}))
 
+					await syncDatabases(_c);
 					return _c.json({message: "Categories imported"}, 200);
 				//Error handling
 				} catch (e) {

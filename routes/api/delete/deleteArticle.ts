@@ -1,5 +1,5 @@
 import type { Context } from "hono";
-import { prismaConnection } from "../../../lib/utils/prismaConnection"
+import { choosePrismaConnection, prismaConnection } from "../../../lib/utils/prismaConnection"
 
 export default async function deleteArticle(c: Context) {
 
@@ -15,7 +15,7 @@ export default async function deleteArticle(c: Context) {
 		if (isNaN(id) || id < 0 || id > 999999)
 			throw Error("Invalid post id");
 
-		const prisma = prismaConnection(c);
+		const prisma = await choosePrismaConnection(c); 		
 		const ret = await prisma.post.delete({where: {id: id}});
 		
 		if (!ret)
